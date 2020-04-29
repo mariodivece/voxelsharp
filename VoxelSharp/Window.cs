@@ -10,6 +10,7 @@
     using System.IO;
     using Common;
     using Engine;
+    using System.Linq;
 
     public class Window : GameWindow
     {
@@ -28,6 +29,8 @@
         private SpotLight SpotLight;
 
         private readonly List<Block> Blocks = new List<Block>(BlockCount);
+
+        private readonly Queue<double> FpsMeasures = new Queue<double>(2048);
 
         // We need the point lights' positions to draw the lamps and to get light the materials properly
         private readonly Vector3[] PointLightPositions =
@@ -178,7 +181,11 @@
             }
             */
 
-            Title = $"FPS: {1d / e.Time:0.000}";
+            var fpsMeasure = 1d / e.Time;
+            FpsMeasures.Enqueue(fpsMeasure);
+            Title = $"FPS: {fpsMeasure:0.000} | AVG: {FpsMeasures.Average():0.000}";
+            if (FpsMeasures.Count > 1000)
+                FpsMeasures.Dequeue();
 
             if (IsKeyDown(Key.Escape))
             {
