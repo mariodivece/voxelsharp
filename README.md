@@ -21,5 +21,8 @@ Learning and experimenting with OpenGL core
  - Intancing full example: https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/10.3.asteroids_instanced/asteroids_instanced.cpp
 
 ## Benchmarks
- - [Commit](commit/6ca46b8561af68cf95ffb8bf261031758069a2b7) | RTX 2070S | 1080p | 4096 Blocks | Individual Rendering | 370 FPS
- 
+
+| Commit | Video Card | Resolution | Block Count | Render Method | FPS |
+| --- | --- | --- | --- | --- | --- |
+| [Commit](commit/6ca46b8561af68cf95ffb8bf261031758069a2b7) | RTX 2070S | 1080p | 4096 | Individual Rendering | 370 |
+| [Commit](commit/6ca46b8561af68cf95ffb8bf261031758069a2b7) | RTX 1060 | 1080p | 4096 | Individual Rendering | 350 |
