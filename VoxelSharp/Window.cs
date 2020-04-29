@@ -29,17 +29,7 @@
         private SpotLight SpotLight;
 
         private readonly List<Block> Blocks = new List<Block>(BlockCount);
-
         private readonly Queue<double> FpsMeasures = new Queue<double>(2048);
-
-        // We need the point lights' positions to draw the lamps and to get light the materials properly
-        private readonly Vector3[] PointLightPositions =
-        {
-            new Vector3(0.7f, 0.2f, 2.0f),
-            new Vector3(2.3f, -3.3f, -4.0f),
-            new Vector3(-4.0f, 2.0f, -12.0f),
-            new Vector3(0.0f, 0.0f, -3.0f)
-        };
 
         public Window()
             : base(new GameWindowSettings(), new NativeWindowSettings { Size = new Vector2i(1920, 1080), Title = "Sample 01" })
@@ -81,14 +71,22 @@
             RenderShader.DirectionalLight.Diffuse = new Vector3(0.4f, 0.4f, 0.4f);
             RenderShader.DirectionalLight.Specular = new Vector3(0.5f, 0.5f, 0.5f);
 
-            for (var i = 0; i < PointLightPositions.Length; i++)
+            var pointLightPositions = new Vector3[]
+            {
+                new Vector3(0.7f, 0.2f, 2.0f),
+                new Vector3(2.3f, -3.3f, -4.0f),
+                new Vector3(-4.0f, 2.0f, -12.0f),
+                new Vector3(0.0f, 0.0f, -3.0f)
+            };
+
+            for (var i = 0; i < pointLightPositions.Length; i++)
             {
                 var light = RenderShader.PointLights[i];
                 light.IsEnabled = true;
-                light.Position = PointLightPositions[i];
-                light.Ambient = new Vector3(0.05f, 0.05f, 0.05f);
-                light.Diffuse = new Vector3(0.8f, 0.8f, 0.8f);
-                light.Specular = new Vector3(1.0f, 1.0f, 1.0f);
+                light.Position = pointLightPositions[i];
+                light.Ambient = Vector3.One * 0.05f;
+                light.Diffuse = Vector3.One * 0.8f;
+                light.Specular = Vector3.One;
                 light.Constant = 1f;
                 light.Linear = 0.09f;
                 light.Quadratic = 0.032f;
@@ -96,9 +94,9 @@
 
             SpotLight = RenderShader.SpotLights[0];
             SpotLight.IsEnabled = true;
-            SpotLight.Ambient = new Vector3(0.0f, 0.0f, 0.0f);
-            SpotLight.Diffuse = new Vector3(1.0f, 1.0f, 1.0f);
-            SpotLight.Specular = new Vector3(1.0f, 1.0f, 1.0f);
+            SpotLight.Ambient = Vector3.Zero;
+            SpotLight.Diffuse = Vector3.One;
+            SpotLight.Specular = Vector3.One;
             SpotLight.Constant = 1f;
             SpotLight.Linear = 0.09f;
             SpotLight.Quadratic = 0.032f;
