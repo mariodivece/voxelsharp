@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30014.187
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoxelSharp", "VoxelSharp\VoxelSharp.csproj", "{042727DE-930A-4EA2-B2A7-633FB0F12C85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{01CF50A1-DC73-4C7F-B9CC-56781DE0D46F}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{042727DE-930A-4EA2-B2A7-633FB0F12C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042727DE-930A-4EA2-B2A7-633FB0F12C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042727DE-930A-4EA2-B2A7-633FB0F12C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{042727DE-930A-4EA2-B2A7-633FB0F12C85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C821D7E8-EB3C-4B69-995E-B99998AF098D}
+	EndGlobalSection
+EndGlobal
