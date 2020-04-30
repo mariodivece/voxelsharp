@@ -1,31 +1,26 @@
-﻿namespace VoxelSharp.Engine
+﻿namespace VoxelSharp
 {
     using Common;
     using OpenToolkit.Graphics.OpenGL4;
     using OpenToolkit.Mathematics;
-    using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using Engine;
 
-    public class DefaultShaderProgram : ShaderProgram
+    public class BlockSetRenderer : ShaderProgram
     {
-        private const int MaxSpotLights = 8;
-        private const int MaxPointLights = 8;
+        public const int MaxSpotLights = 8;
+        public const int MaxPointLights = 8;
 
-        private static readonly string VertexSource = Path.Combine(Utils.ShadersDirectory, "default.vert");
-        private static readonly string FragmentSource = Path.Combine(Utils.ShadersDirectory, "default.frag");
-        private readonly List<PointLight> m_PointLights = new List<PointLight>(MaxPointLights);
-        private readonly List<SpotLight> m_SpotLights = new List<SpotLight>(MaxSpotLights);
-        
-        public DefaultShaderProgram()
+        private static readonly string VertexSource = Utils.ShaderPath("default.vert");
+        private static readonly string FragmentSource = Utils.ShaderPath("default.frag");
+
+        private readonly BlockScene Scene;
+
+        public BlockSetRenderer(BlockScene scene)
             : base()
         {
-            for (var i = 0; i < MaxSpotLights; i++)
-                m_SpotLights.Add(new SpotLight());
-
-            for (var i = 0; i < MaxPointLights; i++)
-                m_PointLights.Add(new PointLight());
-
+            Scene = scene;
             Add(new Shader(Path.GetFileName(VertexSource), File.ReadAllText(VertexSource, Encoding.UTF8), ShaderType.VertexShader));
 
             var fragmentSource = File.ReadAllText(FragmentSource, Encoding.UTF8);
@@ -36,16 +31,6 @@
             Compile();
         }
 
-        public Camera Camera { get; } = new Camera();
-
-        public Material Material { get; } = new Material { Specular = new Vector3(0.5f, 0.5f, 0.5f), Shininess = 32f };
-
-        public DirectionalLight DirectionalLight { get; } = new DirectionalLight(); 
-
-        public IReadOnlyList<PointLight> PointLights => m_PointLights;
-
-        public IReadOnlyList<SpotLight> SpotLights => m_SpotLights;
-
         public void ApplyCamera()
         {
             try
@@ -53,9 +38,9 @@
                 CheckBound();
                 IsCheckBoundDisabled = true;
 
-                Set("view", Camera.GetViewMatrix());
-                Set("projection", Camera.GetProjectionMatrix());
-                Set("viewPos", Camera.Position);
+                Set("view", Scene.Camera.GetViewMatrix());
+                Set("projection", Scene.Camera.GetProjectionMatrix());
+                Set("viewPos", Scene.Camera.Position);
             }
             finally
             {
@@ -70,15 +55,17 @@
                 CheckBound();
                 IsCheckBoundDisabled = true;
 
-                Set("material.diffuse", Material.Diffuse.HasValue ? 1 : 0);
-                if (Material.Diffuse.HasValue)
-                    Set("material.diffuse", Material.Diffuse.Value);
+                var material = Scene.BlockSet.Material;
 
-                Set("material.specular", Material.Specular.HasValue ? 1 : 0);
-                if (Material.Specular.HasValue)
-                    Set("material.specular", Material.Specular.Value);
+                Set("material.diffuse", material.Diffuse.HasValue ? 1 : 0);
+                if (material.Diffuse.HasValue)
+                    Set("material.diffuse", material.Diffuse.Value);
 
-                Set("material.shininess", Material.Shininess);
+                Set("material.specular", material.Specular.HasValue ? 1 : 0);
+                if (material.Specular.HasValue)
+                    Set("material.specular", material.Specular.Value);
+
+                Set("material.shininess", material.Shininess);
             }
             finally
             {
@@ -93,13 +80,14 @@
                 CheckBound();
                 IsCheckBoundDisabled = true;
 
-                Set("dirLight.direction", DirectionalLight.Direction);
-                Set("dirLight.ambient", DirectionalLight.Ambient);
-                Set("dirLight.diffuse", DirectionalLight.Diffuse);
-                Set("dirLight.specular", DirectionalLight.Specular);
+                var dirLight = Scene.DirectionalLight;
+                Set("dirLight.direction", dirLight.Direction);
+                Set("dirLight.ambient", dirLight.Ambient);
+                Set("dirLight.diffuse", dirLight.Diffuse);
+                Set("dirLight.specular", dirLight.Specular);
 
                 var i = 0;
-                foreach (var light in PointLights)
+                foreach (var light in Scene.PointLights)
                 {
                     Set($"pointLights[{i}].enabled", light.IsEnabled ? 1 : 0);
 
@@ -113,12 +101,12 @@
                     Set($"pointLights[{i}].constant", light.Constant);
                     Set($"pointLights[{i}].linear", light.Linear);
                     Set($"pointLights[{i}].quadratic", light.Quadratic);
-                    
+
                     i++;
                 }
 
                 i = 0;
-                foreach (var light in SpotLights)
+                foreach (var light in Scene.SpotLights)
                 {
                     Set($"spotLights[{i}].enabled", light.IsEnabled ? 1 : 0);
 

@@ -1,4 +1,4 @@
-﻿namespace VoxelSharp.Common
+﻿namespace VoxelSharp.Engine
 {
     using System;
     using System.IO;
@@ -25,5 +25,9 @@
         public static string ShadersDirectory { get; }
 
         public static string TexturesDirectory { get; }
+
+        public static string TexturePath(string filename) => Path.Combine(TexturesDirectory, filename);
+
+        public static string ShaderPath(string filename) => Path.Combine(ShadersDirectory, filename);
     }
 }

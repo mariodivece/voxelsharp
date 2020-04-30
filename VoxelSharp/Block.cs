@@ -1,4 +1,4 @@
-﻿namespace VoxelSharp.Engine
+﻿namespace VoxelSharp
 {
     using Common;
     using OpenToolkit.Mathematics;
