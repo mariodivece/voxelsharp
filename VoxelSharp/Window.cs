@@ -23,8 +23,8 @@
         private Texture DiffuseMap;
         private Texture SpecularMap;
 
-        private VertexBuffer BlockVertexBuffer;
-        private VertexArray BlockVertexArray;
+        private ArrayBuffer<float> BlockVertexBuffer;
+        private VertexArray BlockVertexAtrribs;
 
         private SpotLight SpotLight;
 
@@ -48,15 +48,19 @@
             SpecularMap = new Texture(Path.Combine(Utils.TexturesDirectory, "container2_specular.png"));
 
             BlockVertexBuffer = Block.VertexBuffer;
-            BlockVertexArray = new VertexArray();
+            BlockVertexAtrribs = new VertexArray();
 
-            using (BlockVertexArray.Bind())
+            using (BlockVertexBuffer.Bind())
             {
-                using (BlockVertexBuffer.Bind())
+                using (BlockVertexAtrribs.Bind())
                 {
-                    BindShaderParameterFloat(RenderShader, "aPos", 3, 0);
-                    BindShaderParameterFloat(RenderShader, "aNormal", 3, 3 * sizeof(float));
-                    BindShaderParameterFloat(RenderShader, "aTexCoords", 2, 6 * sizeof(float));
+                    var dataType = VertexAttribPointerType.Float;
+                    var floatSize = sizeof(float);
+                    var stride = 8 * floatSize;
+
+                    BlockVertexAtrribs.AddPointer(RenderShader, "aPos", 3, dataType, stride, 0);
+                    BlockVertexAtrribs.AddPointer(RenderShader, "aNormal", 3, dataType, stride, 3 * floatSize);
+                    BlockVertexAtrribs.AddPointer(RenderShader, "aTexCoords", 2, dataType, stride, 6 * floatSize);
                 }
             }
 
@@ -105,7 +109,7 @@
 
             var random = new Random();
 
-            var scaleRangeMin = 50;
+            var scaleRangeMin = 80;
             var scaleRangeMax = 150;
 
             for (var i = 0; i < BlockCount; i++)
@@ -115,13 +119,11 @@
                     random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
                     random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
 
-                var randomScale = Vector3.One;
-                /*
+                // var randomScale = Vector3.One;
                 var randomScale = new Vector3(
-                    random.Next(scaleRangeMin, scaleRangeMax) / 10f,
-                    random.Next(scaleRangeMin, scaleRangeMax) / 10f,
-                    random.Next(scaleRangeMin, scaleRangeMax) / 10f);
-                */
+                    random.Next(scaleRangeMin, scaleRangeMax) / 100f,
+                    random.Next(scaleRangeMin, scaleRangeMax) / 100f,
+                    random.Next(scaleRangeMin, scaleRangeMax) / 100f);
 
                 Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
             }
@@ -136,7 +138,7 @@
             SpotLight.Position = RenderShader.Camera.Position;
             SpotLight.Direction = RenderShader.Camera.Front;
 
-            using (BlockVertexArray.Bind())
+            using (BlockVertexAtrribs.Bind())
             {
                 using (DiffuseMap.Bind(TextureTarget.Texture2D, TextureUnit.Texture0))
                 {
@@ -155,7 +157,6 @@
                                 //var angle = 20.0f * i;
                                 // model *= Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.3f, 0.5f), angle);
                                 //RenderShader.Set("model", model);
-
                                 RenderShader.ApplyModel(block.ComputeMatrix());
                                 GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
                             }
@@ -230,13 +231,6 @@
             GL.Viewport(0, 0, Size.X, Size.Y);
             RenderShader.Camera.AspectRatio = Size.X / (float)Size.Y;
             base.OnResize(e);
-        }
-
-        private static void BindShaderParameterFloat(ShaderProgram shader, string argName, int length, int offset)
-        {
-            var argLocation = shader.GetAttribLocation(argName);
-            GL.EnableVertexAttribArray(argLocation);
-            GL.VertexAttribPointer(argLocation, length, VertexAttribPointerType.Float, false, 8 * sizeof(float), offset);
         }
     }
 }

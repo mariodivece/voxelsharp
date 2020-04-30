@@ -23,5 +23,25 @@
         {
             GL.DeleteVertexArray(Handle);
         }
+
+        public void AddPointer(int shaderArgIndex, int itemCount, VertexAttribPointerType itemType, int stride, int offset, int divisor)
+        {
+            if (!IsBound)
+                throw new InvalidOperationException("Bind this object before calling this method");
+
+            GL.EnableVertexAttribArray(shaderArgIndex);
+            GL.VertexAttribPointer(shaderArgIndex, itemCount, itemType, false, stride, offset);
+            if (divisor > 0)
+                GL.VertexAttribDivisor(shaderArgIndex, divisor);
+        }
+
+        public void AddPointer(int shaderArgIndex, int itemCount, VertexAttribPointerType itemType, int stride, int offset) =>
+            AddPointer(shaderArgIndex, itemCount, itemType, stride, offset, 0);
+
+        public void AddPointer(ShaderProgram shader, string shaderArgName, int itemCount, VertexAttribPointerType itemType, int stride, int offset, int divisor) =>
+            AddPointer(shader.GetAttribLocation(shaderArgName), itemCount, itemType, stride, offset, divisor);
+
+        public void AddPointer(ShaderProgram shader, string shaderArgName, int itemCount, VertexAttribPointerType itemType, int stride, int offset) =>
+            AddPointer(shader.GetAttribLocation(shaderArgName), itemCount, itemType, stride, offset, 0);
     }
 }

@@ -54,15 +54,15 @@
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
         };
 
-        private static VertexBuffer m_VertexBuffer;
+        private static ArrayBuffer<float> m_VertexBuffer;
 
-        public static VertexBuffer VertexBuffer
+        public static ArrayBuffer<float> VertexBuffer
         {
             get
             {
                 if (m_VertexBuffer == null)
                 {
-                    m_VertexBuffer = new VertexBuffer(VertexData);
+                    m_VertexBuffer = new ArrayBuffer<float>(VertexData);
                     m_VertexBuffer.Commit();
                 }
 
@@ -78,11 +78,14 @@
 
         public Matrix4 ComputeMatrix()
         {
-            return Matrix4.Identity * Matrix4.CreateTranslation(Position) *
+            // TODO: Still missing rotation
+            return Matrix4.Identity * Matrix4.CreateTranslation(Position) * Matrix4.CreateScale(Scale);
+                /*
                 Matrix4.CreateRotationX(Rotation.X) *
                 Matrix4.CreateRotationY(Rotation.Y) *
                 Matrix4.CreateRotationZ(Rotation.Z) *
-                Matrix4.CreateScale(Scale);
+                */
+                ;
         }
     }
 }

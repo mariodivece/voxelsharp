@@ -39,6 +39,7 @@
         {
             Position = position;
             AspectRatio = aspectRatio;
+            Fov = 50;
         }
 
         // The position of the camera

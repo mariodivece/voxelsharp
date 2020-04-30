@@ -9,8 +9,8 @@
 
     public class DefaultShaderProgram : ShaderProgram
     {
-        private const int MaxSpotLights = 16;
-        private const int MaxPointLights = 16;
+        private const int MaxSpotLights = 8;
+        private const int MaxPointLights = 8;
 
         private static readonly string VertexSource = Path.Combine(Utils.ShadersDirectory, "default.vert");
         private static readonly string FragmentSource = Path.Combine(Utils.ShadersDirectory, "default.frag");
