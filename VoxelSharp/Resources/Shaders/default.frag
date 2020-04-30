@@ -1,4 +1,9 @@
 ﻿#version 330 core
+
+//We have a max of 256 point lights now, so we define a preprossecor directive to tell the gpu the size of our point light array
+#define NR_POINT_LIGHTS 4
+#define NR_SPOT_LIGHTS 4
+
 //In this tutorial it might seem like a lot is going on, but really we just combine the last tutorials, 3 pieces of source code into one
 //and added 3 extra point lights.
 struct Material {
@@ -46,10 +51,6 @@ struct SpotLight{
     float linear;
     float quadratic;
 };
-
-//We have a max of 256 point lights now, so we define a preprossecor directive to tell the gpu the size of our point light array
-#define NR_POINT_LIGHTS 4
-#define NR_SPOT_LIGHTS 4
 
 uniform DirLight dirLight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];

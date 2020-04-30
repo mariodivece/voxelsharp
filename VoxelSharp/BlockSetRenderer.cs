@@ -12,8 +12,8 @@
         public const int MaxSpotLights = 8;
         public const int MaxPointLights = 8;
 
-        private static readonly string VertexSource = Utils.ShaderPath("default.vert");
-        private static readonly string FragmentSource = Utils.ShaderPath("default.frag");
+        private readonly string VertexSource = Utils.ShaderPath("default.vert");
+        private readonly string FragmentSource = Utils.ShaderPath("default.frag");
 
         private readonly BlockScene Scene;
 
@@ -21,6 +21,12 @@
             : base()
         {
             Scene = scene;
+            if (Scene.IsInstanceRendered)
+            {
+                VertexSource = Utils.ShaderPath("instanced.vert");
+                VertexSource = Utils.ShaderPath("instanced.frag");
+            }
+            
             Add(new Shader(Path.GetFileName(VertexSource), File.ReadAllText(VertexSource, Encoding.UTF8), ShaderType.VertexShader));
 
             var fragmentSource = File.ReadAllText(FragmentSource, Encoding.UTF8);

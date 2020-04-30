@@ -4,6 +4,7 @@
     using OpenToolkit.Mathematics;
     using System;
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
     using VoxelSharp.Common;
     using VoxelSharp.Engine;
 
@@ -21,30 +22,10 @@
         {
             // associate the scene
             Scene = scene;
-            
+
             // Load Textures
             DiffuseMap = new Texture(Utils.TexturePath("container2.png"));
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
-
-            // Load mesh
-            BlockVertexBuffer = Block.VertexBuffer;
-            BlockVertexAtrribs = new VertexArray();
-            
-
-            // Bind mesh parameters to shader arguments
-            using (BlockVertexBuffer.Bind())
-            {
-                using (BlockVertexAtrribs.Bind())
-                {
-                    var dataType = VertexAttribPointerType.Float;
-                    var floatSize = sizeof(float);
-                    var stride = 8 * floatSize;
-
-                    BlockVertexAtrribs.AddPointer(Scene.Renderer, "aPos", 3, dataType, stride, 0);
-                    BlockVertexAtrribs.AddPointer(Scene.Renderer, "aNormal", 3, dataType, stride, 3 * floatSize);
-                    BlockVertexAtrribs.AddPointer(Scene.Renderer, "aTexCoords", 2, dataType, stride, 6 * floatSize);
-                }
-            }
 
             // Setup the individual blocks
             var random = new Random();
@@ -64,19 +45,52 @@
                 m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
             }
 
+            // Load mesh
+            VertexVBO = Block.VertexBuffer;
+            MeshVAO = new VertexArray();
+
             // The model matrices buffer contains model matrices for all cubes
             UpdateMatricesBuffer();
+
+            // Bind mesh parameters to shader arguments
+            using (MeshVAO.Bind())
+            {
+                var dataType = VertexAttribPointerType.Float;
+                var floatSize = sizeof(float);
+                var mat4Size = Marshal.SizeOf<Matrix4>();
+                var vec4Size = Marshal.SizeOf<Vector4>();
+                var stride = 8 * floatSize;
+
+                // Bind geometry to the attribute buffer
+                using (VertexVBO.Bind())
+                {
+                    MeshVAO.AddPointer(Scene.Renderer, "aPos", 3, dataType, stride, 0);
+                    MeshVAO.AddPointer(Scene.Renderer, "aNormal", 3, dataType, stride, 3 * floatSize);
+                    MeshVAO.AddPointer(Scene.Renderer, "aTexCoords", 2, dataType, stride, 6 * floatSize);
+                }
+
+                if (Scene.IsInstanceRendered)
+                {
+                    // Bind model matrices (transformations) to the attribute buffer
+                    using (InstanceVBO.Bind())
+                    {
+                        var modelLoc = Scene.Renderer.GetAttribLocation("aInstanceMatrix");
+                        for (var i = 0; i < 4; i++)
+                            MeshVAO.AddPointer(modelLoc + i, 4, dataType, mat4Size, i * vec4Size, 1);
+                    }
+                }
+            }
         }
 
         public BlockScene Scene { get; }
 
         public IReadOnlyList<Block> Blocks => m_Blocks;
 
-        public ArrayBuffer<float> BlockVertexBuffer { get; }
+        public ArrayBuffer<float> VertexVBO { get; }
 
-        public VertexArray BlockVertexAtrribs { get; }
+        public ArrayBuffer<Matrix4> InstanceVBO { get; private set; }
 
-        public ArrayBuffer<Matrix4> ModelMatricesBuffer { get; private set; }
+        public VertexArray MeshVAO { get; }
 
         public Material Material { get; } = new Material { Specular = new Vector3(0.5f, 0.5f, 0.5f), Shininess = 32f };
 
@@ -86,18 +100,15 @@
 
         public void UpdateMatricesBuffer()
         {
-            if (ModelMatricesBuffer == null)
-                ModelMatricesBuffer = new ArrayBuffer<Matrix4>();
+            if (InstanceVBO == null)
+                InstanceVBO = new ArrayBuffer<Matrix4>();
 
             var data = new Matrix4[Blocks.Count];
-            for(var i = 0; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
                 data[i] = Blocks[i].ComputeMatrix();
 
-            using (ModelMatricesBuffer.Bind())
-            {
-                ModelMatricesBuffer.Data = data;
-                ModelMatricesBuffer.Commit();
-            }
+            InstanceVBO.Data = data;
+            InstanceVBO.Commit();
         }
     }
 }

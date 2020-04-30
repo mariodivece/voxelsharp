@@ -35,6 +35,8 @@
             Specular = new Vector3(0.5f, 0.5f, 0.5f)
         };
 
+        public bool IsInstanceRendered { get; }
+
         public IReadOnlyList<PointLight> PointLights => m_PointLights;
 
         public IReadOnlyList<SpotLight> SpotLights => m_SpotLights;
@@ -45,7 +47,7 @@
 
         public void Render()
         {
-            using (BlockSet.BlockVertexAtrribs.Bind())
+            using (BlockSet.MeshVAO.Bind())
             {
                 using (BlockSet.DiffuseMap.Bind(TextureTarget.Texture2D, TextureUnit.Texture0))
                 {
@@ -57,16 +59,18 @@
                             blockRenderer.ApplyCamera();
                             blockRenderer.ApplyMaterial();
                             blockRenderer.ApplyLights();
-
-                            foreach (var block in BlockSet.Blocks)
+                            
+                            if (IsInstanceRendered)
                             {
-                                //var model = Matrix4.Identity;
-                                //model *= Matrix4.CreateTranslation(CubePositions[i]);
-                                //var angle = 20.0f * i;
-                                // model *= Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.3f, 0.5f), angle);
-                                //RenderShader.Set("model", model);
-                                blockRenderer.ApplyModel(block.ComputeMatrix());
-                                GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+                                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 36, BlockSet.Blocks.Count);
+                            }
+                            else
+                            {
+                                foreach (var block in BlockSet.Blocks)
+                                {
+                                    blockRenderer.ApplyModel(block.ComputeMatrix());
+                                    GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+                                }
                             }
                         }
                     }
