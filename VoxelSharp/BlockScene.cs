@@ -14,15 +14,9 @@
 
         public BlockScene()
         {
-            for (var i = 0; i < BlockSetRenderer.MaxSpotLights; i++)
-                m_SpotLights.Add(new SpotLight());
-
-            for (var i = 0; i < BlockSetRenderer.MaxPointLights; i++)
-                m_PointLights.Add(new PointLight());
-
+            SetupLights();
             Renderer = new BlockSetRenderer(this);
             BlockSet = new BlockSet(this);
-            SetupLights();
         }
 
         public Camera Camera { get; } = new Camera();
@@ -59,7 +53,7 @@
                             blockRenderer.ApplyCamera();
                             blockRenderer.ApplyMaterial();
                             blockRenderer.ApplyLights();
-                            
+
                             if (IsInstanceRendered)
                             {
                                 GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 36, BlockSet.Blocks.Count);
@@ -80,15 +74,26 @@
 
         private void SetupLights()
         {
+            for (var i = 0; i < BlockSetRenderer.MaxSpotLights; i++)
+                m_SpotLights.Add(new SpotLight());
+
+            for (var i = 0; i < BlockSetRenderer.MaxPointLights; i++)
+                m_PointLights.Add(new PointLight());
+
             var pointLightPositions = new Vector3[]
             {
-                new Vector3(0.7f, 0.2f, 2.0f),
-                new Vector3(2.3f, -3.3f, -4.0f),
-                new Vector3(-4.0f, 2.0f, -12.0f),
-                new Vector3(0.0f, 0.0f, -3.0f)
+                new Vector3(-5, 2, -10),
+                new Vector3(-5, 2, -20),
+                new Vector3(5, 2, -10),
+                new Vector3(5, 2, -20)
+                /*
+                new Vector3(-5, 2, 5),
+                new Vector3(5, 2, -5),
+                new Vector3(5, 2, 5)
+                */
             };
 
-            for (var i = 0; i < pointLightPositions.Length; i++)
+            for (var i = 0; i < pointLightPositions.Length && i < m_PointLights.Count; i++)
             {
                 var light = PointLights[i];
                 light.IsEnabled = true;
@@ -101,6 +106,7 @@
                 light.Quadratic = 0.032f;
             }
 
+            // camera
             var spotLight = SpotLights[0];
             spotLight.IsEnabled = true;
             spotLight.Ambient = Vector3.Zero;
@@ -111,6 +117,20 @@
             spotLight.Quadratic = 0.032f;
             spotLight.Cutoff = (float)Math.Cos(MathHelper.DegreesToRadians(12.5f));
             spotLight.OuterCutoff = (float)Math.Cos(MathHelper.DegreesToRadians(30.5f));
+
+            // top-down spotlight
+            spotLight = SpotLights[1];
+            spotLight.Position = new Vector3(0, 6, -15);
+            spotLight.Direction = new Vector3(0, -1, 0);
+            spotLight.IsEnabled = true;
+            spotLight.Ambient = new Vector3(0, 1, 1);
+            spotLight.Diffuse = Vector3.One;
+            spotLight.Specular = Vector3.One;
+            spotLight.Constant = 1f;
+            spotLight.Linear = 0.09f;
+            spotLight.Quadratic = 0.032f;
+            spotLight.Cutoff = (float)Math.Cos(MathHelper.DegreesToRadians(12.5f));
+            spotLight.OuterCutoff = spotLight.Cutoff; // (float)Math.Cos(MathHelper.DegreesToRadians(30.5f));
         }
     }
 }
