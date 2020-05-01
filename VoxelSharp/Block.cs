@@ -79,13 +79,15 @@
         public Matrix4 ComputeMatrix()
         {
             // TODO: Still missing rotation
-            return Matrix4.Identity * Matrix4.CreateTranslation(Position) * Matrix4.CreateScale(Scale);
+            var result = Matrix4.Identity * Matrix4.CreateTranslation(Position) * Matrix4.CreateScale(Scale);
                 /*
                 Matrix4.CreateRotationX(Rotation.X) *
                 Matrix4.CreateRotationY(Rotation.Y) *
                 Matrix4.CreateRotationZ(Rotation.Z) *
                 */
                 ;
+
+            return result;
         }
     }
 }

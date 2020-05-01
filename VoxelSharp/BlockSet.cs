@@ -29,29 +29,21 @@
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
             // Setup the individual blocks
-            if (Scene.IsInstanceRendered)
+            var random = new Random();
+            for (var i = 0; i < BlockCount; i++)
             {
-                m_Blocks.Add(new Block());
-                m_Blocks.Add(new Block { Scale = new Vector3(0, 2, 0) });
-            }
-            else
-            {
-                var random = new Random();
-                for (var i = 0; i < BlockCount; i++)
-                {
-                    var randomPosition = new Vector3(
-                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
+                var randomPosition = new Vector3(
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
 
-                    // var randomScale = Vector3.One;
-                    var randomScale = new Vector3(
-                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
+                // var randomScale = Vector3.One;
+                var randomScale = new Vector3(
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
 
-                    m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
-                }
+                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
             }
 
             // Load mesh
@@ -115,7 +107,10 @@
 
             var data = new Matrix4[Blocks.Count];
             for (var i = 0; i < data.Length; i++)
+            {
                 data[i] = Blocks[i].ComputeMatrix();
+                data[i].Transpose();
+            }
 
             InstanceVBO.Data = data;
             InstanceVBO.Commit();
