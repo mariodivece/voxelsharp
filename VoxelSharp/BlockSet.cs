@@ -28,23 +28,7 @@
             DiffuseMap = new Texture(Utils.TexturePath("container2.png"));
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
-            // Setup the individual blocks
-            var random = new Random();
-            for (var i = 0; i < BlockCount; i++)
-            {
-                var randomPosition = new Vector3(
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
-
-                // var randomScale = Vector3.One;
-                var randomScale = new Vector3(
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
-
-                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
-            }
+            PyramidBlocks();
 
             // Load mesh
             VertexVBO = Block.VertexBuffer;
@@ -114,6 +98,65 @@
 
             InstanceVBO.Data = data;
             InstanceVBO.Commit();
+        }
+
+        private void ExplodeBlocks()
+        {
+            // Setup the individual blocks
+            var random = new Random();
+            for (var i = 0; i < BlockCount; i++)
+            {
+                var randomPosition = new Vector3(
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
+
+                // var randomScale = Vector3.One;
+                var randomScale = new Vector3(
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
+
+                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
+            }
+        }
+
+        private void PyramidBlocks()
+        {
+            var width = 30;
+            var genBlocks = new List<Block>(width * width * width);
+
+            for (var y = 0; y < width / 2; y++)
+            {
+                for (var x = 0 + y; x < width - y; x++)
+                {
+                    for (var z = 0 + y; z < width - y; z++)
+                    {
+                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width) });
+                    }
+                }
+            }
+
+            // Only keep blocks on the outside
+            foreach (var block in genBlocks)
+            {
+                var p = block.Position;
+
+                var neighborCount = 
+                    genBlocks.Count(b => b.Position.X == p.X - 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
+                    genBlocks.Count(b => b.Position.X == p.X + 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
+                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y - 1 && b.Position.Z == p.Z) +
+                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y + 1 && b.Position.Z == p.Z) +
+                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z - 1) +
+                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z + 1);
+
+                if (neighborCount >= 6)
+                    continue;
+
+                m_Blocks.Add(block);
+            }
+
+            Console.WriteLine($"Block Count: {m_Blocks.Count}");
         }
     }
 }
