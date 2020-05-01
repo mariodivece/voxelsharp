@@ -87,8 +87,11 @@
             if (IsKeyDown(Key.LShift))
                 camera.Position -= camera.Up * cameraSpeed * (float)e.Time; // Down
 
-            camera.Yaw += MouseDelta.X * sensitivity;
-            camera.Pitch -= MouseDelta.Y * sensitivity;
+            if (IsAnyMouseButtonDown)
+            {
+                camera.Yaw += MouseDelta.X * sensitivity;
+                camera.Pitch -= MouseDelta.Y * sensitivity;
+            }
 
             base.OnUpdateFrame(e);
         }

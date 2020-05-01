@@ -35,7 +35,7 @@
             Specular = new Vector3(0.5f, 0.5f, 0.5f)
         };
 
-        public bool IsInstanceRendered { get; }
+        public bool IsInstanceRendered { get; } = true;
 
         public IReadOnlyList<PointLight> PointLights => m_PointLights;
 

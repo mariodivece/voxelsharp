@@ -9,8 +9,8 @@
 
     public class BlockSetRenderer : ShaderProgram
     {
-        public const int MaxSpotLights = 8;
-        public const int MaxPointLights = 8;
+        public const int MaxSpotLights = 4;
+        public const int MaxPointLights = 4;
 
         private readonly string VertexSource = Utils.ShaderPath("default.vert");
         private readonly string FragmentSource = Utils.ShaderPath("default.frag");
@@ -24,7 +24,7 @@
             if (Scene.IsInstanceRendered)
             {
                 VertexSource = Utils.ShaderPath("instanced.vert");
-                VertexSource = Utils.ShaderPath("instanced.frag");
+                FragmentSource = Utils.ShaderPath("instanced.frag");
             }
             
             Add(new Shader(Path.GetFileName(VertexSource), File.ReadAllText(VertexSource, Encoding.UTF8), ShaderType.VertexShader));

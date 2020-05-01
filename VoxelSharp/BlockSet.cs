@@ -4,6 +4,7 @@
     using OpenToolkit.Mathematics;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using VoxelSharp.Common;
     using VoxelSharp.Engine;
@@ -28,21 +29,29 @@
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
             // Setup the individual blocks
-            var random = new Random();
-            for (var i = 0; i < BlockCount; i++)
+            if (Scene.IsInstanceRendered)
             {
-                var randomPosition = new Vector3(
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
-                    random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
+                m_Blocks.Add(new Block());
+                m_Blocks.Add(new Block { Scale = new Vector3(0, 2, 0) });
+            }
+            else
+            {
+                var random = new Random();
+                for (var i = 0; i < BlockCount; i++)
+                {
+                    var randomPosition = new Vector3(
+                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f,
+                        random.Next(-BlockDistanceRange, BlockDistanceRange) / 10f);
 
-                // var randomScale = Vector3.One;
-                var randomScale = new Vector3(
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
-                    random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
+                    // var randomScale = Vector3.One;
+                    var randomScale = new Vector3(
+                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
+                        random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
 
-                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
+                    m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
+                }
             }
 
             // Load mesh
@@ -55,28 +64,29 @@
             // Bind mesh parameters to shader arguments
             using (MeshVAO.Bind())
             {
-                var dataType = VertexAttribPointerType.Float;
-                var floatSize = sizeof(float);
-                var mat4Size = Marshal.SizeOf<Matrix4>();
-                var vec4Size = Marshal.SizeOf<Vector4>();
-                var stride = 8 * floatSize;
+                var unitType = VertexAttribPointerType.Float;
+                var unitSize = sizeof(float);
+                var stride = 8 * unitSize;
 
                 // Bind geometry to the attribute buffer
                 using (VertexVBO.Bind())
                 {
-                    MeshVAO.AddPointer(Scene.Renderer, "aPos", 3, dataType, stride, 0);
-                    MeshVAO.AddPointer(Scene.Renderer, "aNormal", 3, dataType, stride, 3 * floatSize);
-                    MeshVAO.AddPointer(Scene.Renderer, "aTexCoords", 2, dataType, stride, 6 * floatSize);
+                    MeshVAO.AddPointer(Scene.Renderer, "aPos", 3, unitType, stride, 0);
+                    MeshVAO.AddPointer(Scene.Renderer, "aNormal", 3, unitType, stride, 3 * unitSize);
+                    MeshVAO.AddPointer(Scene.Renderer, "aTexCoords", 2, unitType, stride, 6 * unitSize);
                 }
 
                 if (Scene.IsInstanceRendered)
                 {
+                    var mat4Size = Marshal.SizeOf<Matrix4>();
+                    var vec4Size = Marshal.SizeOf<Vector4>();
+
                     // Bind model matrices (transformations) to the attribute buffer
                     using (InstanceVBO.Bind())
                     {
                         var modelLoc = Scene.Renderer.GetAttribLocation("aInstanceMatrix");
                         for (var i = 0; i < 4; i++)
-                            MeshVAO.AddPointer(modelLoc + i, 4, dataType, mat4Size, i * vec4Size, 1);
+                            MeshVAO.AddPointer(modelLoc + i, 4, unitType, mat4Size, i * vec4Size, 1);
                     }
                 }
             }
