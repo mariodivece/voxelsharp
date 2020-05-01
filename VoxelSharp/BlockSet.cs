@@ -28,7 +28,8 @@
             DiffuseMap = new Texture(Utils.TexturePath("container2.png"));
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
-            PyramidBlocks();
+            var blockCount = PyramidBlocks(true, 30);
+            Console.WriteLine($"Block Count: {blockCount}");
 
             // Load mesh
             VertexVBO = Block.VertexBuffer;
@@ -93,7 +94,7 @@
             for (var i = 0; i < data.Length; i++)
             {
                 data[i] = Blocks[i].ComputeMatrix();
-                data[i].Transpose();
+                // data[i].Transpose();
             }
 
             InstanceVBO.Data = data;
@@ -121,9 +122,8 @@
             }
         }
 
-        private void PyramidBlocks()
+        private int PyramidBlocks(bool simplify, int width)
         {
-            var width = 30;
             var genBlocks = new List<Block>(width * width * width);
 
             for (var y = 0; y < width / 2; y++)
@@ -138,25 +138,32 @@
             }
 
             // Only keep blocks on the outside
-            foreach (var block in genBlocks)
+            if (simplify)
             {
-                var p = block.Position;
+                foreach (var block in genBlocks)
+                {
+                    var p = block.Position;
 
-                var neighborCount = 
-                    genBlocks.Count(b => b.Position.X == p.X - 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
-                    genBlocks.Count(b => b.Position.X == p.X + 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
-                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y - 1 && b.Position.Z == p.Z) +
-                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y + 1 && b.Position.Z == p.Z) +
-                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z - 1) +
-                    genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z + 1);
+                    var neighborCount =
+                        genBlocks.Count(b => b.Position.X == p.X - 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
+                        genBlocks.Count(b => b.Position.X == p.X + 1 && b.Position.Y == p.Y && b.Position.Z == p.Z) +
+                        genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y - 1 && b.Position.Z == p.Z) +
+                        genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y + 1 && b.Position.Z == p.Z) +
+                        genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z - 1) +
+                        genBlocks.Count(b => b.Position.X == p.X && b.Position.Y == p.Y && b.Position.Z == p.Z + 1);
 
-                if (neighborCount >= 6)
-                    continue;
+                    if (neighborCount >= 6)
+                        continue;
 
-                m_Blocks.Add(block);
+                    m_Blocks.Add(block);
+                }
+            }
+            else
+            {
+                m_Blocks.AddRange(genBlocks);
             }
 
-            Console.WriteLine($"Block Count: {m_Blocks.Count}");
+            return m_Blocks.Count;
         }
     }
 }
