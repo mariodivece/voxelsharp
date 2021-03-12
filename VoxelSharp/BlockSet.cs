@@ -132,7 +132,7 @@
                 {
                     for (var z = 0 + y; z < width - y; z++)
                     {
-                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width) });
+                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width), Rotation = new Vector3(0, 0.785398f, 0) });
                     }
                 }
             }

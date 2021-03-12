@@ -78,14 +78,12 @@
 
         public Matrix4 ComputeMatrix()
         {
-            // TODO: Still missing rotation
-            var result = Matrix4.Identity * Matrix4.CreateTranslation(Position) * Matrix4.CreateScale(Scale);
-                /*
-                Matrix4.CreateRotationX(Rotation.X) *
-                Matrix4.CreateRotationY(Rotation.Y) *
-                Matrix4.CreateRotationZ(Rotation.Z) *
-                */
-                ;
+            var quaternion = Quaternion.FromEulerAngles(Rotation.X, Rotation.Y, Rotation.Z);
+
+            var result = Matrix4.Identity *
+                Matrix4.CreateFromQuaternion(quaternion) *
+                Matrix4.CreateScale(Scale) *
+                Matrix4.CreateTranslation(Position);
 
             return result;
         }
