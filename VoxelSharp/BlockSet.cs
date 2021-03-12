@@ -62,6 +62,9 @@
                     using (InstanceVBO.Bind())
                     {
                         var modelLoc = Scene.Renderer.GetAttribLocation("aInstanceMatrix");
+                        // we can't just pass the mat4x4 because attrib size cannot be biggler than 4 floats.
+                        // so we need to add 4 different pointers, each 4 floats to add all 4 matrix pointers
+                        // the divisor argument specifies every nth instance -- we want 1 as the divisor.
                         for (var i = 0; i < 4; i++)
                             MeshVAO.AddPointer(modelLoc + i, 4, unitType, mat4Size, i * vec4Size, 1);
                     }
