@@ -28,9 +28,6 @@
             DiffuseMap = new Texture(Utils.TexturePath("container2.png"));
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
-            // TODO: Testing rotation with ExplodeBlocks()
-            // Rotation matrix transformation not quite there yet
-
             var blockCount = PyramidBlocks(true, 30); // ExplodeBlocks();
             Console.WriteLine($"Block Count: {blockCount}");
 
@@ -145,7 +142,11 @@
                 {
                     for (var z = 0 + y; z < width - y; z++)
                     {
-                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width) });
+                        genBlocks.Add(new Block
+                        {
+                            Position = new Vector3(x - (width / 2), y, z - width),
+                            Rotation = new Vector3(45f, 45f, 45f)
+                        });
                     }
                 }
             }

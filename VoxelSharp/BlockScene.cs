@@ -9,8 +9,8 @@
 
     public class BlockScene
     {
-        private readonly List<PointLight> m_PointLights = new List<PointLight>(BlockSetRenderer.MaxPointLights);
-        private readonly List<SpotLight> m_SpotLights = new List<SpotLight>(BlockSetRenderer.MaxSpotLights);
+        private readonly List<PointLight> m_PointLights = new(BlockSetRenderer.MaxPointLights);
+        private readonly List<SpotLight> m_SpotLights = new(BlockSetRenderer.MaxSpotLights);
 
         public BlockScene()
         {

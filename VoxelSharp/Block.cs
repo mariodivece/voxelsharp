@@ -78,16 +78,21 @@
 
         public Matrix4 ComputeMatrix()
         {
-            var quaternion = Quaternion.FromEulerAngles(
-                MathHelper.DegreesToRadians(Rotation.X),
-                MathHelper.DegreesToRadians(Rotation.Y),
-                MathHelper.DegreesToRadians(Rotation.Z));
+            var eulerAngles = new Vector3
+            {
+                X = MathHelper.DegreesToRadians(Rotation.X),
+                Y = MathHelper.DegreesToRadians(Rotation.Y),
+                Z = MathHelper.DegreesToRadians(Rotation.Z),
+            };
 
-            var result = Matrix4.Identity *
-                Matrix4.CreateFromQuaternion(quaternion) *
-                Matrix4.CreateScale(Scale) *
-                Matrix4.CreateTranslation(Position);
-
+            var q = Quaternion.FromEulerAngles(eulerAngles);
+            
+            var result = Matrix4.Identity
+                * Matrix4.CreateFromQuaternion(q)
+                * Matrix4.CreateScale(Scale)
+                * Matrix4.CreateTranslation(Position)
+                ;
+            
             return result;
         }
     }
