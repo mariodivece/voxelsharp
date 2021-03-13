@@ -1,6 +1,6 @@
 ﻿namespace VoxelSharp.Engine
 {
-    using OpenToolkit.Mathematics;
+    using OpenTK.Mathematics;
 
     public abstract class LightBase
     {

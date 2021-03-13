@@ -1,6 +1,6 @@
 ﻿namespace VoxelSharp.Common
 {
-    using OpenToolkit.Graphics.OpenGL4;
+    using OpenTK.Graphics.OpenGL;
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
@@ -31,7 +31,7 @@
                         image.Width,
                         image.Height,
                         0,
-                        OpenToolkit.Graphics.OpenGL4.PixelFormat.Bgra,
+                        OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                         PixelType.UnsignedByte,
                         data.Scan0);
                 }

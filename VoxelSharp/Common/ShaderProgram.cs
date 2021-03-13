@@ -1,16 +1,16 @@
 ﻿namespace VoxelSharp.Common
 {
-    using OpenToolkit.Graphics.OpenGL4;
-    using OpenToolkit.Mathematics;
+    using OpenTK.Graphics.OpenGL;
+    using OpenTK.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
     public class ShaderProgram : GLBindableObject
     {
-        private readonly List<Shader> m_Shaders = new List<Shader>(16);
+        private readonly List<Shader> m_Shaders = new(16);
 
-        private readonly Dictionary<string, int> m_UniformLocations = new Dictionary<string, int>(256);
+        private readonly Dictionary<string, int> m_UniformLocations = new(256);
 
         public ShaderProgram()
         {

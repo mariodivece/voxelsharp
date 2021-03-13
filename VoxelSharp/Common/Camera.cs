@@ -1,6 +1,6 @@
 ﻿namespace VoxelSharp.Common
 {
-    using OpenToolkit.Mathematics;
+    using OpenTK.Mathematics;
     using System;
 
 

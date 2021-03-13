@@ -1,7 +1,7 @@
 ﻿namespace VoxelSharp
 {
     using Common;
-    using OpenToolkit.Mathematics;
+    using OpenTK.Mathematics;
 
     public class Block
     {
@@ -72,13 +72,16 @@
 
         public Vector3 Scale { get; set; } = Vector3.One;
 
-        public Vector3 Position { get; set; }
+        public Vector3 Position { get; set; } = Vector3.Zero;
 
-        public Vector3 Rotation { get; set; }
+        public Vector3 Rotation { get; set; } = Vector3.Zero;
 
         public Matrix4 ComputeMatrix()
         {
-            var quaternion = Quaternion.FromEulerAngles(Rotation.X, Rotation.Y, Rotation.Z);
+            var quaternion = Quaternion.FromEulerAngles(
+                MathHelper.DegreesToRadians(Rotation.X),
+                MathHelper.DegreesToRadians(Rotation.Y),
+                MathHelper.DegreesToRadians(Rotation.Z));
 
             var result = Matrix4.Identity *
                 Matrix4.CreateFromQuaternion(quaternion) *

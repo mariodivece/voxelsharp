@@ -1,11 +1,11 @@
 ﻿namespace VoxelSharp
 {
-    using OpenToolkit.Mathematics;
+    using OpenTK.Graphics.OpenGL;
+    using OpenTK.Mathematics;
     using System;
     using System.Collections.Generic;
     using VoxelSharp.Common;
     using VoxelSharp.Engine;
-    using OpenToolkit.Graphics.OpenGL4;
 
     public class BlockScene
     {

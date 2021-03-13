@@ -1,6 +1,6 @@
 ﻿namespace VoxelSharp.Engine
 {
-    using OpenToolkit.Mathematics;
+    using OpenTK.Mathematics;
 
     public class DirectionalLight : LightBase
     {

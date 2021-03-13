@@ -1,7 +1,7 @@
 ﻿namespace VoxelSharp
 {
-    using OpenToolkit.Graphics.OpenGL4;
-    using OpenToolkit.Mathematics;
+    using OpenTK.Graphics.OpenGL;
+    using OpenTK.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,7 +17,7 @@
         private const int ScaleRangeMin = 80;
         private const int ScaleRangeMax = 150;
 
-        private readonly List<Block> m_Blocks = new List<Block>(BlockCount);
+        private readonly List<Block> m_Blocks = new(BlockCount);
 
         public BlockSet(BlockScene scene)
         {
@@ -28,7 +28,10 @@
             DiffuseMap = new Texture(Utils.TexturePath("container2.png"));
             SpecularMap = new Texture(Utils.TexturePath("container2_specular.png"));
 
-            var blockCount = PyramidBlocks(true, 30);
+            // TODO: Testing rotation with ExplodeBlocks()
+            // Rotation matrix transformation not quite there yet
+
+            var blockCount = PyramidBlocks(true, 30); // ExplodeBlocks();
             Console.WriteLine($"Block Count: {blockCount}");
 
             // Load mesh
@@ -104,7 +107,7 @@
             InstanceVBO.Commit();
         }
 
-        private void ExplodeBlocks()
+        private int ExplodeBlocks()
         {
             // Setup the individual blocks
             var random = new Random();
@@ -121,8 +124,15 @@
                     random.Next(ScaleRangeMin, ScaleRangeMax) / 100f,
                     random.Next(ScaleRangeMin, ScaleRangeMax) / 100f);
 
-                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale });
+                var randomRotation = new Vector3(
+                    random.Next(0, 90),
+                    random.Next(0, 90),
+                    random.Next(0, 90));
+
+                m_Blocks.Add(new Block { Position = randomPosition, Scale = randomScale, Rotation = randomRotation });
             }
+
+            return BlockCount;
         }
 
         private int PyramidBlocks(bool simplify, int width)
@@ -135,7 +145,7 @@
                 {
                     for (var z = 0 + y; z < width - y; z++)
                     {
-                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width), Rotation = new Vector3(0, 0.785398f, 0) });
+                        genBlocks.Add(new Block { Position = new Vector3(x - (width / 2), y, z - width) });
                     }
                 }
             }
