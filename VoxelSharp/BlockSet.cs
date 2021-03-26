@@ -145,7 +145,7 @@
                         genBlocks.Add(new Block
                         {
                             Position = new Vector3(x - (width / 2), y, z - width),
-                            Rotation = new Vector3(45f, 45f, 45f)
+                            Rotation = new Vector3(0f, 0f, 0f)
                         });
                     }
                 }
